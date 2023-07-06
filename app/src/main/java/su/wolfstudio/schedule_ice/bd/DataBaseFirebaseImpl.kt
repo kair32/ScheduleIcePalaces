@@ -5,9 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import com.google.gson.JsonElement
 import su.wolfstudio.schedule_ice.cashe.ApplicationCacheImpl
 import su.wolfstudio.schedule_ice.cashe.update
 import su.wolfstudio.schedule_ice.model.ListPalaces
@@ -26,7 +24,6 @@ class DataBaseFirebaseImpl(applicationCacheImpl: ApplicationCacheImpl) : DataBas
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
                 Log.w("TAG", "Failed to read value.", error.toException())
             }
         })

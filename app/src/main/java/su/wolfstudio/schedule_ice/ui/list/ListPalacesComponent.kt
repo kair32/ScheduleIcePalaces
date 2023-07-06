@@ -8,4 +8,6 @@ interface ListPalacesComponent {
 
     fun onPalacesClick(palacesId: Long)
     fun onPalacesScheduleClick(palacesId: Long)
+
+    fun onFindLine(text: String)
 }

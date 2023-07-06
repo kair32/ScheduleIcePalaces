@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Schedule ice palaces</string>
     <string name="list_palaces">Список дворцов</string>
+    <string name="search_palaces">Найти дворец</string>
 </resources>
