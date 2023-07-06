@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "651857361085",
+    "firebase_url": "https://schedule-ice-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "schedule-ice",
+    "storage_bucket": "schedule-ice.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651857361085:android:7397b343339adb1defdfd4",
+        "android_client_info": {
+          "package_name": "su.wolfstudio.schedule_ice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651857361085-3viuunlhjigik8lr825oknsatrv8luro.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCicV3VxxFDExJnmCk5r6huAdtwt59GH8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651857361085-3viuunlhjigik8lr825oknsatrv8luro.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
