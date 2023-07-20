@@ -13,5 +13,6 @@ data class Palaces(
     val name: String = "",
     val url: String = "",
     val urlSchedule: String = "",
-    val urlRoute: String? = null
+    val urlRoute: String? = null,
+    var isFavorite: Boolean = false
 )

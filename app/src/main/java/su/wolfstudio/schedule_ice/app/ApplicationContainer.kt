@@ -7,6 +7,7 @@ import kotlinx.coroutines.SupervisorJob
 import su.wolfstudio.schedule_ice.cashe.ApplicationCacheImpl
 import su.wolfstudio.schedule_ice.app.dependencies.DependenciesContainer
 import su.wolfstudio.schedule_ice.bd.DataBaseFirebaseImpl
+import su.wolfstudio.schedule_ice.preferences.PreferencesImpl
 
 interface ApplicationContainer {
 
@@ -17,10 +18,12 @@ interface ApplicationContainer {
 
         private val applicationCache = ApplicationCacheImpl()
         private val dataBaseFirebase = DataBaseFirebaseImpl(applicationCache)
+        private val preferences = PreferencesImpl(context)
 
         init {
             dependenciesContainer.add(dataBaseFirebase)
             dependenciesContainer.add(applicationCache)
+            dependenciesContainer.add(preferences)
         }
 
     }

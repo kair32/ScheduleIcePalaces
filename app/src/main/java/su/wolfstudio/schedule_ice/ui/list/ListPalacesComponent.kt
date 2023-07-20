@@ -10,4 +10,6 @@ interface ListPalacesComponent {
     fun onPalacesScheduleClick(palacesId: Long)
 
     fun onFindLine(text: String)
+
+    fun onFavorite(palacesId: Long)
 }

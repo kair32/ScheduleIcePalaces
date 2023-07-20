@@ -9,7 +9,6 @@ import com.google.firebase.ktx.Firebase
 import su.wolfstudio.schedule_ice.cashe.ApplicationCacheImpl
 import su.wolfstudio.schedule_ice.cashe.update
 import su.wolfstudio.schedule_ice.model.ListPalaces
-import su.wolfstudio.schedule_ice.model.Palaces
 
 class DataBaseFirebaseImpl(applicationCacheImpl: ApplicationCacheImpl) : DataBaseFirebase {
 
@@ -27,24 +26,5 @@ class DataBaseFirebaseImpl(applicationCacheImpl: ApplicationCacheImpl) : DataBas
                 Log.w("TAG", "Failed to read value.", error.toException())
             }
         })
-    }
-
-    override fun getListPalaces(): List<Palaces> {
-        return listOf(
-            Palaces(
-                id = 0,
-                name = "Солнцево",
-                url = "https://arena-solntsevo.ru/",
-                urlSchedule = "https://arena-solntsevo.ru/raspisanie",
-                urlRoute = "https://yandex.ru/maps/org/ledovaya_arena_solntsevo/68421173641"
-            ),
-            Palaces(
-                id = 1,
-                name = "Солнцево2",
-                url = "https://arena-solntsevo.ru/",
-                urlSchedule = "https://arena-solntsevo.ru/raspisanie",
-                urlRoute = "https://yandex.ru/maps/-/CDsOumS"
-            ),
-        )
     }
 }
