@@ -2,13 +2,10 @@ package su.wolfstudio.schedule_ice.ui.list
 
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.replay
 import kotlinx.coroutines.launch
 import su.wolfstudio.schedule_ice.cashe.ApplicationCache
 import su.wolfstudio.schedule_ice.model.Palaces
 import su.wolfstudio.schedule_ice.app.dependencies.getDependency
-import su.wolfstudio.schedule_ice.cashe.StateValue
 import su.wolfstudio.schedule_ice.preferences.Preferences
 import su.wolfstudio.schedule_ice.utils.componentCoroutineScope
 
@@ -29,11 +26,11 @@ class RealListPalacesComponent(
     }
     private fun getData(){
         coroutineScope.launch {
-            cash.listPalaces.collect {
+            cash.listPalaces.collect { list ->
                 val listFavorite = pref.getFavoritePalace()
-                it.map { it.isFavorite = listFavorite.contains(it.id) }
+                list.map { it.isFavorite = listFavorite.contains(it.id) }
                 listPalacesDef.clear()
-                listPalacesDef.addAll(it.sortedBy { it.name }.sortedBy { !it.isFavorite })
+                listPalacesDef.addAll(list.sortedBy { it.name }.sortedBy { !it.isFavorite })
                 listPalaces.emit(listPalacesDef)
             }
         }
