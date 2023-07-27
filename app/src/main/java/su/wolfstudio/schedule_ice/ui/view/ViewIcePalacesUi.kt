@@ -30,7 +30,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
+import su.wolfstudio.schedule_ice.R
 import su.wolfstudio.schedule_ice.ui.theme.SkateColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,11 +44,19 @@ fun ViewIcePalacesUi(component: ViewIcePalacesComponent, onBackCallback: () -> U
             title = {
                 Text(text = palace.name)
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(SkateColor),
+            colors = TopAppBarDefaults.topAppBarColors(SkateColor),
             navigationIcon = {
                 IconButton(onClick = onBackCallback) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = null
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = { component.onAddSchedule() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_add_calendar),
                         contentDescription = null
                     )
                 }

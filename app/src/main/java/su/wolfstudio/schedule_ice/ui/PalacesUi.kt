@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
 import su.wolfstudio.schedule_ice.ui.list.ListIcePalacesUi
 import su.wolfstudio.schedule_ice.ui.view.ViewIcePalacesUi
+import su.wolfstudio.schedule_ice.ui.view.add_schedule.AddScheduleUi
 
 @Composable
 fun PalacesUi(component: PalacesComponent) {
@@ -15,6 +16,7 @@ fun PalacesUi(component: PalacesComponent) {
         when(val instance = child.instance){
             is PalacesComponent.Child.List -> ListIcePalacesUi(instance.component)
             is PalacesComponent.Child.Details -> ViewIcePalacesUi(instance.component) { component.onBack() }
+            is PalacesComponent.Child.AddSchedule -> AddScheduleUi(instance.component) { component.onBack() }
         }
     }
 }

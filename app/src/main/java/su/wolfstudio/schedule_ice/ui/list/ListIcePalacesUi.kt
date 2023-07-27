@@ -56,7 +56,7 @@ fun ListIcePalacesUi(component: ListPalacesComponent) {
                     title = {
                         Text(text = stringResource(id = R.string.list_palaces))
                     },
-                    colors = TopAppBarDefaults.smallTopAppBarColors(SkateColor),
+                    colors = TopAppBarDefaults.topAppBarColors(SkateColor),
                     actions = {
                         IconButton(
                             onClick = {

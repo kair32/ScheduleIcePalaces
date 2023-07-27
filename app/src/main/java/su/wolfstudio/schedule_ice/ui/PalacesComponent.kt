@@ -4,6 +4,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import kotlinx.coroutines.flow.StateFlow
 import su.wolfstudio.schedule_ice.ui.list.ListPalacesComponent
 import su.wolfstudio.schedule_ice.ui.view.ViewIcePalacesComponent
+import su.wolfstudio.schedule_ice.ui.view.add_schedule.AddScheduleComponent
 
 interface PalacesComponent {
     val childStack: StateFlow<ChildStack<*, Child>>
@@ -13,5 +14,6 @@ interface PalacesComponent {
     sealed interface Child{
         class List(val component: ListPalacesComponent) : Child
         class Details(val component: ViewIcePalacesComponent) : Child
+        class AddSchedule(val component: AddScheduleComponent) : Child
     }
 }

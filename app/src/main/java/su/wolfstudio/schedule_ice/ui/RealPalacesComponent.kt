@@ -6,12 +6,12 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.push
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.parcelize.Parcelize
 import su.wolfstudio.schedule_ice.ui.list.RealListPalacesComponent
 import su.wolfstudio.schedule_ice.ui.view.RealViewIcePalacesComponent
+import su.wolfstudio.schedule_ice.ui.view.add_schedule.RealAddScheduleComponent
 import su.wolfstudio.schedule_ice.utils.toStateFlow
 
 class RealPalacesComponent(
@@ -35,9 +35,16 @@ class RealPalacesComponent(
         componentContext: ComponentContext
     ): PalacesComponent.Child = when(config){
 
+        is ChildConfig.AddSchedule ->
+            PalacesComponent.Child.AddSchedule(
+                RealAddScheduleComponent(componentContext, config.palaceId)
+            )
+
         is ChildConfig.Details ->
             PalacesComponent.Child.Details(
-                RealViewIcePalacesComponent(componentContext, config.palacesId, config.isSchedule)
+                RealViewIcePalacesComponent(componentContext, config.palacesId, config.isSchedule) { palaceId ->
+                    navigation.push(ChildConfig.AddSchedule(palaceId = palaceId))
+                }
             )
 
         is ChildConfig.List ->
@@ -58,5 +65,8 @@ class RealPalacesComponent(
 
         @Parcelize
         data class Details(val palacesId: Long, val isSchedule: Boolean) : ChildConfig, Parcelable
+
+        @Parcelize
+        data class AddSchedule(val palaceId: Long) : ChildConfig, Parcelable
     }
 }
