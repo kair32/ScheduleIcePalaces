@@ -18,7 +18,7 @@ class DataBaseFirebaseImpl(applicationCacheImpl: ApplicationCacheImpl) : DataBas
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 dataSnapshot.getValue(ListPalaces::class.java)?.let { palaces ->
-                    applicationCacheImpl.listPalaces.update { palaces.items }
+                    applicationCacheImpl.listPalace.update { palaces.items }
                 }
             }
 

@@ -8,7 +8,7 @@ import su.wolfstudio.schedule_ice.bd.DataBase
 import su.wolfstudio.schedule_ice.cashe.ApplicationCache
 import su.wolfstudio.schedule_ice.cashe.StateValue
 import su.wolfstudio.schedule_ice.cashe.stateValue
-import su.wolfstudio.schedule_ice.model.Palaces
+import su.wolfstudio.schedule_ice.model.Palace
 import su.wolfstudio.schedule_ice.model.Schedule
 import su.wolfstudio.schedule_ice.utils.componentCoroutineScope
 import java.time.LocalDate
@@ -21,19 +21,14 @@ class RealAddScheduleComponent(
     private val db = getDependency<DataBase>()
     private val coroutineScope = componentCoroutineScope()
 
-    override val palace: StateValue<Palaces> by stateValue(cash.listPalaces.value.find { it.id == palacesId }!!)
+    override val palace: StateValue<Palace> by stateValue(cash.listPalace.value.find { it.id == palacesId }!!)
     override val schedules: StateValue<List<Schedule>> by stateValue(listOf())
     override val currentDate: StateValue<LocalDate> by stateValue(LocalDate.now())
 
     init {
         coroutineScope.launch(IO) {
-            schedules.emit(db.getSchedules(palacesId))
-        }
-    }
-
-    override fun onSave() {
-        coroutineScope.launch(IO) {
-            db.updateSchedules(schedules.value)
+            db.getSchedulesStream(palacesId)
+                .collect{ schedules.emit(it) }
         }
     }
 
@@ -42,29 +37,26 @@ class RealAddScheduleComponent(
     }
 
     override fun onAddSchedule() {
-        val listUpdate = schedules.value.toMutableList()
-        val id = (listUpdate.maxByOrNull { it.id }?.id ?: -1).plus(1)
-        listUpdate.add(
-            Schedule(
-                id = id,
-                palaceId = palacesId,
-                date = currentDate.value
+        coroutineScope.launch(IO) {
+            db.updateSchedule(
+                Schedule(
+                    palaceId = palacesId,
+                    date = currentDate.value
+                )
             )
-        )
-        schedules.compareAndSet(schedules.value, listUpdate)
+        }
     }
 
     override fun onUpdateTime(scheduleId: Int, startTime: Int, endTime: Int) {
-        schedules.value.find { it.id == scheduleId }?.apply {
-            this.startTime = startTime
-            this.endTime = endTime
+        coroutineScope.launch(IO) {
+            db.updateTime(scheduleId, startTime, endTime)
         }
     }
 
     override fun onRemoveSchedule(scheduleId: Int) {
-        val schedulesUpdate = schedules.value.toMutableList()
-        schedulesUpdate.removeAll { it.id == scheduleId }
-        schedules.compareAndSet(schedules.value, schedulesUpdate)
+        coroutineScope.launch(IO) {
+            db.removeScheduleById(scheduleId)
+        }
     }
 
 }

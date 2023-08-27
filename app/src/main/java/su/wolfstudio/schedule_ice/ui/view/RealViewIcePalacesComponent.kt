@@ -5,7 +5,7 @@ import su.wolfstudio.schedule_ice.app.dependencies.getDependency
 import su.wolfstudio.schedule_ice.cashe.ApplicationCache
 import su.wolfstudio.schedule_ice.cashe.StateValue
 import su.wolfstudio.schedule_ice.cashe.stateValue
-import su.wolfstudio.schedule_ice.model.Palaces
+import su.wolfstudio.schedule_ice.model.Palace
 
 class RealViewIcePalacesComponent(
     componentContext: ComponentContext,
@@ -15,7 +15,7 @@ class RealViewIcePalacesComponent(
 ): ComponentContext by componentContext, ViewIcePalacesComponent{
     private val cash = getDependency<ApplicationCache>()
 
-    override val palace: StateValue<Palaces> by stateValue(cash.listPalaces.value.find { it.id == palacesId }!!)
+    override val palace: StateValue<Palace> by stateValue(cash.listPalace.value.find { it.id == palacesId }!!)
 
     override fun onAddSchedule() {
         onPalacesChosen.invoke(palacesId)

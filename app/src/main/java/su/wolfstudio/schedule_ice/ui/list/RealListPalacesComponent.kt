@@ -4,21 +4,22 @@ import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import su.wolfstudio.schedule_ice.cashe.ApplicationCache
-import su.wolfstudio.schedule_ice.model.Palaces
+import su.wolfstudio.schedule_ice.model.Palace
 import su.wolfstudio.schedule_ice.app.dependencies.getDependency
 import su.wolfstudio.schedule_ice.preferences.Preferences
 import su.wolfstudio.schedule_ice.utils.componentCoroutineScope
 
 class RealListPalacesComponent(
     componentContext: ComponentContext,
-    val onPalacesChosen: (Long, Boolean) -> Unit
+    val onPalacesChosen: (Long, Boolean) -> Unit,
+    val onSchedule: () -> Unit
 ): ComponentContext by componentContext, ListPalacesComponent {
 
     private val cash = getDependency<ApplicationCache>()
     private val pref = getDependency<Preferences>()
 
-    override val listPalaces: MutableStateFlow<List<Palaces>> = MutableStateFlow(listOf())
-    private val listPalacesDef = mutableListOf<Palaces>()
+    override val listPalace: MutableStateFlow<List<Palace>> = MutableStateFlow(listOf())
+    private val listPalaceDef = mutableListOf<Palace>()
     private val coroutineScope = componentCoroutineScope()
 
     init {
@@ -26,14 +27,18 @@ class RealListPalacesComponent(
     }
     private fun getData(){
         coroutineScope.launch {
-            cash.listPalaces.collect { list ->
+            cash.listPalace.collect { list ->
                 val listFavorite = pref.getFavoritePalace()
                 list.map { it.isFavorite = listFavorite.contains(it.id) }
-                listPalacesDef.clear()
-                listPalacesDef.addAll(list.sortedBy { it.name }.sortedBy { !it.isFavorite })
-                listPalaces.emit(listPalacesDef)
+                listPalaceDef.clear()
+                listPalaceDef.addAll(list.sortedBy { it.name }.sortedBy { !it.isFavorite })
+                listPalace.emit(listPalaceDef)
             }
         }
+    }
+
+    override fun onShowSchedule() {
+        onSchedule()
     }
 
     override fun onPalacesClick(palacesId: Long) {
@@ -45,9 +50,9 @@ class RealListPalacesComponent(
     }
 
     override fun onFindLine(text: String) {
-        listPalaces.compareAndSet(
-            expect = listPalaces.value,
-            update = listPalacesDef
+        listPalace.compareAndSet(
+            expect = listPalace.value,
+            update = listPalaceDef
                 .filter {
                     it.name.contains(text, ignoreCase = true)
                 }
@@ -59,11 +64,11 @@ class RealListPalacesComponent(
         if (!listFavorite.remove(palacesId))
             listFavorite.add(palacesId)
         pref.setFavoritePalace(palacesId)
-        listPalacesDef.map { it.isFavorite = listFavorite.contains(it.id) }
-        val list = listPalacesDef
+        listPalaceDef.map { it.isFavorite = listFavorite.contains(it.id) }
+        val list = listPalaceDef
             .sortedBy { it.name }
             .sortedBy { !it.isFavorite }
-        listPalaces.compareAndSet(expect = listPalaces.value, update = list)
+        listPalace.compareAndSet(expect = listPalace.value, update = list)
     }
 
 }

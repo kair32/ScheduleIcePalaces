@@ -12,7 +12,7 @@ import su.wolfstudio.schedule_ice.model.Schedule
     entities = [
         Schedule::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(

@@ -24,13 +24,13 @@ import androidx.compose.ui.unit.dp
 import su.wolfstudio.schedule_ice.R
 import su.wolfstudio.schedule_ice.model.Schedule
 import su.wolfstudio.schedule_ice.ui.theme.DimnessLightGray
-import su.wolfstudio.schedule_ice.ui.view.add_schedule.AddScheduleComponent
 
 @Composable
 fun ScheduleItem(
     modifier: Modifier,
     schedule: Schedule,
-    component: AddScheduleComponent
+    onUpdateTime: (scheduleId: Int, startTime: Int, endTime: Int) -> Unit,
+    onRemoveSchedule: (scheduleId: Int) -> Unit
 ) {
     val componentTime = TimerPickerComponent(schedule)
     val hourStart by componentTime.hourStart.collectAsState()
@@ -43,10 +43,8 @@ fun ScheduleItem(
         showTimePicker = showTimePicker,
         component = componentTime
     ) { h, m ->
-        componentTime.updateTime(h,m)
-        val timeStart = hourStart * 60 + minStart
-        val timeEnd = hourEnd * 60 + minEnd
-        component.onUpdateTime(schedule.id, timeStart, timeEnd)
+        val (timeStart, timeEnd) = componentTime.updateTime(h, m)
+        onUpdateTime(schedule.id, timeStart, timeEnd)
     }
 
     CircleRow(modifier = modifier) {
@@ -83,7 +81,7 @@ fun ScheduleItem(
                 .padding(end = 6.dp, top = 6.dp, bottom = 6.dp)
                 .clip(CircleShape)
                 .background(Color.White)
-                .clickable { component.onRemoveSchedule(scheduleId = schedule.id) }
+                .clickable { onRemoveSchedule(schedule.id) }
                 .padding(10.dp)
                 .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.ic_delete),
@@ -103,7 +101,6 @@ fun CircleRow(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp)
             .clip(CircleShape)
             .background(background),
         verticalAlignment = Alignment.CenterVertically,

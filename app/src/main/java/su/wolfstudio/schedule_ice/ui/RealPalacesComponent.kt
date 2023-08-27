@@ -10,6 +10,7 @@ import com.arkivanov.decompose.router.stack.push
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.parcelize.Parcelize
 import su.wolfstudio.schedule_ice.ui.list.RealListPalacesComponent
+import su.wolfstudio.schedule_ice.ui.schedule.RealScheduleComponent
 import su.wolfstudio.schedule_ice.ui.view.RealViewIcePalacesComponent
 import su.wolfstudio.schedule_ice.ui.view.add_schedule.RealAddScheduleComponent
 import su.wolfstudio.schedule_ice.utils.toStateFlow
@@ -53,8 +54,14 @@ class RealPalacesComponent(
                     componentContext,
                     onPalacesChosen = { palacesId, isSchedule ->
                         navigation.push(ChildConfig.Details(palacesId, isSchedule))
-                    }
+                    },
+                    onSchedule = { navigation.push(ChildConfig.Schedule) }
                 )
+            )
+
+        is ChildConfig.Schedule ->
+            PalacesComponent.Child.Schedule(
+                RealScheduleComponent(componentContext)
             )
     }
 
@@ -62,6 +69,9 @@ class RealPalacesComponent(
 
         @Parcelize
         object List: ChildConfig, Parcelable
+
+        @Parcelize
+        object Schedule: ChildConfig, Parcelable
 
         @Parcelize
         data class Details(val palacesId: Long, val isSchedule: Boolean) : ChildConfig, Parcelable

@@ -61,6 +61,7 @@ fun DateItemsUi(component: AddScheduleComponent) {
 
     AnimatedContent(
         targetState = dateList.getOrNull(positionScroll)?.month.getFullDisplayName(),
+        label = "AnimatedContent",
         transitionSpec = {
             if (oldPositionScroll < positionScroll) {
                 slideIntoContainer(

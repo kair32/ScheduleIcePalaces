@@ -6,12 +6,13 @@ import java.time.LocalDate
 
 @Entity(tableName = "schedule")
 data class Schedule(
-    @PrimaryKey
-    val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val palaceId: Long,
     val date: LocalDate,
-    var startTime: Int = 600,// В минутах
-    var endTime: Int = 660,
+    val startTime: Int = 600,// В минутах
+    val endTime: Int = 660,
+    val type: ScheduleType = ScheduleType.DEFAULT,
 ) {
     fun getStartTimeHour() = startTime / 60
     fun getStartTimeMin() = startTime % 60

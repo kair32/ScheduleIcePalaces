@@ -36,7 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import su.wolfstudio.schedule_ice.R
-import su.wolfstudio.schedule_ice.model.Palaces
+import su.wolfstudio.schedule_ice.model.Palace
 import su.wolfstudio.schedule_ice.ui.components.SearchLine
 import su.wolfstudio.schedule_ice.ui.theme.SkateColor
 import su.wolfstudio.schedule_ice.ui.theme.SkateColor40
@@ -45,7 +45,7 @@ import su.wolfstudio.schedule_ice.ui.theme.medium
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ListIcePalacesUi(component: ListPalacesComponent) {
-    val listPalaces by component.listPalaces.collectAsState()
+    val listPalaces by component.listPalace.collectAsState()
     val isSearch = remember { mutableStateOf(false) }
 
     LazyColumn(
@@ -68,6 +68,14 @@ fun ListIcePalacesUi(component: ListPalacesComponent) {
                                 contentDescription = null
                             )
                         }
+                        IconButton(
+                            onClick = { component.onShowSchedule() }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_calendar),
+                                contentDescription = null
+                            )
+                        }
                     }
                 )
                 SearchLine(findLine = component::onFindLine, isSearch)
@@ -80,7 +88,7 @@ fun ListIcePalacesUi(component: ListPalacesComponent) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .animateItemPlacement(),
-                    palaces = it,
+                    palace = it,
                     component = component
                 )
             }
@@ -89,9 +97,9 @@ fun ListIcePalacesUi(component: ListPalacesComponent) {
 }
 
 @Composable
-fun ItemIcePalaces(modifier: Modifier, palaces: Palaces, component: ListPalacesComponent){
+fun ItemIcePalaces(modifier: Modifier, palace: Palace, component: ListPalacesComponent){
     val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse(palaces.urlRoute)
+    intent.data = Uri.parse(palace.urlRoute)
     val context = LocalContext.current
     Box(modifier = modifier){
         Row (
@@ -99,9 +107,9 @@ fun ItemIcePalaces(modifier: Modifier, palaces: Palaces, component: ListPalacesC
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
-                text = palaces.name,
+                text = palace.name,
                 modifier = Modifier
-                    .clickable { component.onPalacesClick(palaces.id) }
+                    .clickable { component.onPalacesClick(palace.id) }
                     .weight(1f)
                     .padding(
                         horizontal = 16.dp,
@@ -113,7 +121,7 @@ fun ItemIcePalaces(modifier: Modifier, palaces: Palaces, component: ListPalacesC
                 modifier = Modifier
                     .padding(start = 16.dp, end = 8.dp),
                 res = R.drawable.ic_schedule
-            ) { component.onPalacesScheduleClick(palaces.id) }
+            ) { component.onPalacesScheduleClick(palace.id) }
             ImageIce(
                 modifier = Modifier
                     .padding(horizontal = 8.dp),
@@ -124,11 +132,11 @@ fun ItemIcePalaces(modifier: Modifier, palaces: Palaces, component: ListPalacesC
             ImageIce(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 16.dp),
-                res = if (palaces.isFavorite)
+                res = if (palace.isFavorite)
                     R.drawable.ic_favorite_fill
                 else R.drawable.ic_favorite
             ){
-                component.onFavorite(palaces.id)
+                component.onFavorite(palace.id)
             }
         }
 
@@ -148,7 +156,7 @@ fun ImageIce(modifier: Modifier, res: Int, onClick: () -> Unit){
         modifier = modifier
             .clickable(
                 onClick = onClick,
-                interactionSource = MutableInteractionSource(),
+                interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false)
             ),
         painter = painterResource(res),

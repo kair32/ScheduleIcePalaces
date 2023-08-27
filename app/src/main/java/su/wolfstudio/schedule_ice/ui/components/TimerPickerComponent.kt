@@ -16,13 +16,20 @@ class TimerPickerComponent(
 
     fun updateStart(isStartUpdate: Boolean) = isStart.compareAndSet(isStart.value, isStartUpdate)
 
-    fun updateTime(hour: Int, minute: Int){
+    fun updateTime(hour: Int, minute: Int): Pair<Int, Int> {
+        val timeStart: Int
+        val timeEnd: Int
         if (isStart.value) {
             hourStart.compareAndSet(hourStart.value, hour)
             minStart.compareAndSet(minStart.value, minute)
+            timeStart = hour * 60 + minute
+            timeEnd = hourEnd.value * 60 + minEnd.value
         }else{
             hourEnd.compareAndSet(hourEnd.value, hour)
             minEnd.compareAndSet(minEnd.value, minute)
+            timeStart = hourStart.value * 60 + minStart.value
+            timeEnd = hour * 60 + minute
         }
+        return Pair(timeStart, timeEnd)
     }
 }
