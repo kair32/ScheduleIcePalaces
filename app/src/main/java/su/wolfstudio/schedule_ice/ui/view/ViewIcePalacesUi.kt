@@ -32,21 +32,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import su.wolfstudio.schedule_ice.R
 import su.wolfstudio.schedule_ice.ui.theme.SkateColor
+import androidx.lifecycle.viewmodel.compose.viewModel
+import su.wolfstudio.schedule_ice.navigation.Screen
+import su.wolfstudio.schedule_ice.ui.base.ViewIcePalacesViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewIcePalacesUi(component: ViewIcePalacesComponent, onBackCallback: () -> Unit){
-    val palace by component.palace.collectAsState()
-    Column {
+fun ViewIcePalacesUi(
+    modifier: Modifier,
+    navigation: NavController,
+    palaceId: Long,
+    isSchedule: Boolean,
+    viewModel: ViewIcePalacesViewModel = viewModel(factory = ViewIcePalacesViewModelFactory(palaceId, isSchedule))
+){
+    val palace by viewModel.palace.collectAsState()
+    Column(
+        modifier = modifier
+    ) {
         TopAppBar(
             title = {
                 Text(text = palace.name)
             },
             colors = TopAppBarDefaults.topAppBarColors(SkateColor),
             navigationIcon = {
-                IconButton(onClick = onBackCallback) {
+                IconButton(onClick = { navigation.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = null
@@ -54,7 +66,9 @@ fun ViewIcePalacesUi(component: ViewIcePalacesComponent, onBackCallback: () -> U
                 }
             },
             actions = {
-                IconButton(onClick = { component.onAddSchedule() }) {
+                IconButton(onClick = {
+                    navigation.navigate(Screen.AddSchedule.screenName + "/" + palace.id)
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add_calendar),
                         contentDescription = null
@@ -63,7 +77,7 @@ fun ViewIcePalacesUi(component: ViewIcePalacesComponent, onBackCallback: () -> U
             }
         )
         WebViewContent(
-            if (component.isSchedule) palace.urlSchedule
+            if (viewModel.isSchedule) palace.urlSchedule
             else palace.url
         )
     }

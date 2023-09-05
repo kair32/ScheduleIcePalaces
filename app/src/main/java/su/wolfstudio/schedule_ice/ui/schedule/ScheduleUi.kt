@@ -49,6 +49,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import su.wolfstudio.schedule_ice.R
 import su.wolfstudio.schedule_ice.model.DateWithSchedulePalace
 import su.wolfstudio.schedule_ice.model.Schedule
@@ -62,12 +64,16 @@ import su.wolfstudio.schedule_ice.ui.view.add_schedule.Date.getDateWithDayOfWeek
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ScheduleUi(component: ScheduleComponent, onBackCallback: () -> Unit) {
-    val palacesSchedules by component.palacesSchedules.collectAsState()
+fun ScheduleUi(
+    modifier: Modifier,
+    navigation: NavController,
+    viewModel: ScheduleViewModel = viewModel(ScheduleViewModelImpl::class.java)
+) {
+    val palacesSchedules by viewModel.palacesSchedules.collectAsState()
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         content = {
             stickyHeader {
                 TopAppBar(
@@ -75,17 +81,15 @@ fun ScheduleUi(component: ScheduleComponent, onBackCallback: () -> Unit) {
                         Text(text = stringResource(id = R.string.schedule))
                     },
                     colors = TopAppBarDefaults.topAppBarColors(SkateColor),
-                    navigationIcon = {
-                        IconButton(onClick = onBackCallback) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = null
-                            )
-                        }
-                    },
                     actions = {
                         IconButton(onClick = {
-                            clipboardManager.setText(AnnotatedString(getCopyFormatSchedule(palacesSchedules)))
+                            clipboardManager.setText(
+                                AnnotatedString(
+                                    getCopyFormatSchedule(
+                                        palacesSchedules
+                                    )
+                                )
+                            )
                         }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_copy),
@@ -95,19 +99,25 @@ fun ScheduleUi(component: ScheduleComponent, onBackCallback: () -> Unit) {
                     }
                 )
             }
-            item { ChooseDatePeriod(component) }
+            item { ChooseDatePeriod(viewModel) }
             items(
                 items = palacesSchedules,
                 key = { it.date.toEpochDay() },
-                itemContent = { DateOfWeek(modifier = Modifier.animateItemPlacement(), item = it, component)}
+                itemContent = {
+                    DateOfWeek(
+                        modifier = Modifier.animateItemPlacement(),
+                        item = it,
+                        viewModel
+                    )
+                }
             )
         }
     )
 }
 
 @Composable
-fun ChooseDatePeriod(component: ScheduleComponent) {
-    val currentWeek by component.currentWeek.collectAsState()
+fun ChooseDatePeriod(viewModel: ScheduleViewModel) {
+    val currentWeek by viewModel.currentWeek.collectAsState()
     val isNextClick = remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
@@ -122,7 +132,7 @@ fun ChooseDatePeriod(component: ScheduleComponent) {
                 .size(28.dp)
                 .clickable(
                     onClick = {
-                        component.onPreviousWeek()
+                        viewModel.onPreviousWeek()
                         isNextClick.value = false
                     },
                     interactionSource = remember { MutableInteractionSource() },
@@ -171,7 +181,7 @@ fun ChooseDatePeriod(component: ScheduleComponent) {
                 .size(28.dp)
                 .clickable(
                     onClick = {
-                        component.onNextWeek()
+                        viewModel.onNextWeek()
                         isNextClick.value = true
                     },
                     interactionSource = remember { MutableInteractionSource() },
@@ -187,7 +197,7 @@ fun ChooseDatePeriod(component: ScheduleComponent) {
 fun DateOfWeek(
     modifier: Modifier,
     item: DateWithSchedulePalace,
-    component: ScheduleComponent
+    viewModel: ScheduleViewModel
 ) {
     val isShowSchedule = remember { mutableStateOf(false) }
     Column(modifier = modifier.fillMaxWidth()) {
@@ -244,8 +254,9 @@ fun DateOfWeek(
                         PalaceSchedule(
                             name = palace.name,
                             schedules = item.schedules.filter { it.palaceId == palace.id },
-                            onUpdateTime = component::onUpdateTime,
-                            onRemoveSchedule = component::onRemoveSchedule
+                            onUpdateTime = viewModel::onUpdateTime,
+                            onRemoveSchedule = viewModel::onRemoveSchedule,
+                            onUpdateSchedule = viewModel::onUpdateSchedule
                         )
                     }
             }
@@ -258,7 +269,8 @@ fun PalaceSchedule(
     name: String,
     schedules: List<Schedule>,
     onUpdateTime: (scheduleId: Int, startTime: Int, endTime: Int) -> Unit,
-    onRemoveSchedule: (scheduleId: Int) -> Unit
+    onRemoveSchedule: (scheduleId: Int) -> Unit,
+    onUpdateSchedule: (schedule: Schedule) -> Unit
 ) {
     Column(
         modifier = Modifier.background(DimnessLightGray)
@@ -276,7 +288,8 @@ fun PalaceSchedule(
                 modifier = Modifier,
                 schedule = it,
                 onUpdateTime = onUpdateTime,
-                onRemoveSchedule = onRemoveSchedule
+                onRemoveSchedule = onRemoveSchedule,
+                onUpdateSchedule = onUpdateSchedule
             )
         }
     }

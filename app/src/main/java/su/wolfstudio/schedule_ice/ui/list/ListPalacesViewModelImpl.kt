@@ -1,32 +1,27 @@
 package su.wolfstudio.schedule_ice.ui.list
 
-import com.arkivanov.decompose.ComponentContext
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import su.wolfstudio.schedule_ice.cashe.ApplicationCache
 import su.wolfstudio.schedule_ice.model.Palace
 import su.wolfstudio.schedule_ice.app.dependencies.getDependency
 import su.wolfstudio.schedule_ice.preferences.Preferences
-import su.wolfstudio.schedule_ice.utils.componentCoroutineScope
+import su.wolfstudio.schedule_ice.ui.base.ViewModelBase
 
-class RealListPalacesComponent(
-    componentContext: ComponentContext,
-    val onPalacesChosen: (Long, Boolean) -> Unit,
-    val onSchedule: () -> Unit
-): ComponentContext by componentContext, ListPalacesComponent {
+class ListPalacesViewModelImpl : ViewModelBase(), ListPalacesViewModel {
 
     private val cash = getDependency<ApplicationCache>()
     private val pref = getDependency<Preferences>()
 
     override val listPalace: MutableStateFlow<List<Palace>> = MutableStateFlow(listOf())
     private val listPalaceDef = mutableListOf<Palace>()
-    private val coroutineScope = componentCoroutineScope()
 
     init {
         getData()
     }
     private fun getData(){
-        coroutineScope.launch {
+        viewModelScope.launch {
             cash.listPalace.collect { list ->
                 val listFavorite = pref.getFavoritePalace()
                 list.map { it.isFavorite = listFavorite.contains(it.id) }
@@ -35,18 +30,6 @@ class RealListPalacesComponent(
                 listPalace.emit(listPalaceDef)
             }
         }
-    }
-
-    override fun onShowSchedule() {
-        onSchedule()
-    }
-
-    override fun onPalacesClick(palacesId: Long) {
-        onPalacesChosen(palacesId, false)
-    }
-
-    override fun onPalacesScheduleClick(palacesId: Long) {
-        onPalacesChosen(palacesId, true)
     }
 
     override fun onFindLine(text: String) {

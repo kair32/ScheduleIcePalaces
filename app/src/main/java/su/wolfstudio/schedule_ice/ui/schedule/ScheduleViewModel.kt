@@ -2,9 +2,10 @@ package su.wolfstudio.schedule_ice.ui.schedule
 
 import kotlinx.coroutines.flow.StateFlow
 import su.wolfstudio.schedule_ice.model.DateWithSchedulePalace
+import su.wolfstudio.schedule_ice.model.Schedule
 import java.time.LocalDate
 
-interface ScheduleComponent {
+interface ScheduleViewModel {
     val palacesSchedules: StateFlow<List<DateWithSchedulePalace>>
     val currentWeek: StateFlow<Pair<LocalDate, LocalDate>>
 
@@ -13,4 +14,6 @@ interface ScheduleComponent {
 
     fun onUpdateTime(scheduleId: Int, startTime: Int, endTime: Int)
     fun onRemoveSchedule(scheduleId: Int)
+
+    fun onUpdateSchedule(schedule: Schedule)
 }

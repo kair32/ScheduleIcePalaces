@@ -43,9 +43,9 @@ import su.wolfstudio.schedule_ice.ui.view.add_schedule.Date.getShortDisplayName
 import java.time.LocalDate
 
 @Composable
-fun DateItemsUi(component: AddScheduleComponent) {
-    val schedules by component.schedules.collectAsState()
-    val currentDate by component.currentDate.collectAsState()
+fun DateItemsUi(viewModel: AddScheduleViewModel) {
+    val schedules by viewModel.schedules.collectAsState()
+    val currentDate by viewModel.currentDate.collectAsState()
     val dateList = Date.getDate()
     var oldPositionScroll by remember { mutableIntStateOf(0) }
     var positionScroll by remember { mutableIntStateOf(0) }
@@ -109,7 +109,7 @@ fun DateItemsUi(component: AddScheduleComponent) {
                 localDate = it,
                 equalDate = currentDate == it,
                 schedulesCount = schedules.count { schedule ->  schedule.date == it }
-            ) { component.chooseCurrentDate(it) }
+            ) { viewModel.chooseCurrentDate(it) }
         }
     }
 }

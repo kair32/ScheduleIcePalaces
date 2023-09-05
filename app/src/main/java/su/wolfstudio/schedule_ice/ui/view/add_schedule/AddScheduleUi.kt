@@ -26,26 +26,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import su.wolfstudio.schedule_ice.R
+import su.wolfstudio.schedule_ice.ui.base.AddScheduleViewModelFactory
 import su.wolfstudio.schedule_ice.ui.components.ScheduleItem
 import su.wolfstudio.schedule_ice.ui.components.dashedBorder
 import su.wolfstudio.schedule_ice.ui.theme.GreenBlueColor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun AddScheduleUi(component: AddScheduleComponent, onBackCallback: () -> Unit) {
-    val palace by component.palace.collectAsState()
-    val schedules by component.schedules.collectAsState()
-    val currentDate by component.currentDate.collectAsState()
+fun AddScheduleUi(
+    modifier: Modifier,
+    navigation: NavController,
+    palaceId: Long,
+    viewModel: AddScheduleViewModel = viewModel(factory = AddScheduleViewModelFactory(palaceId))
+) {
+    val palace by viewModel.palace.collectAsState()
+    val schedules by viewModel.schedules.collectAsState()
+    val currentDate by viewModel.currentDate.collectAsState()
 
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         TopAppBar(
             title = {
                 Text(text = stringResource(id = R.string.schedule) + " " + palace.name)
             },
             colors = TopAppBarDefaults.topAppBarColors(SkateColor),
             navigationIcon = {
-                IconButton(onClick = onBackCallback) {
+                IconButton(onClick = { navigation.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = null
@@ -53,7 +63,7 @@ fun AddScheduleUi(component: AddScheduleComponent, onBackCallback: () -> Unit) {
                 }
             },
         )
-        DateItemsUi(component)
+        DateItemsUi(viewModel)
 
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -67,8 +77,9 @@ fun AddScheduleUi(component: AddScheduleComponent, onBackCallback: () -> Unit) {
                             .padding(top = 16.dp)
                             .animateItemPlacement(),
                         schedule = it,
-                        onUpdateTime = component::onUpdateTime,
-                        onRemoveSchedule = component::onRemoveSchedule
+                        onUpdateTime = viewModel::onUpdateTime,
+                        onRemoveSchedule = viewModel::onRemoveSchedule,
+                        onUpdateSchedule = viewModel::onUpdateSchedule
                     )
                 }
                 item {
@@ -79,7 +90,7 @@ fun AddScheduleUi(component: AddScheduleComponent, onBackCallback: () -> Unit) {
                             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                             .clip(RoundedCornerShape(45))
                             .dashedBorder(2.dp, GreenBlueColor, 45.dp)
-                            .clickable { component.onAddSchedule() }
+                            .clickable { viewModel.onAddSchedule() }
                             .padding(10.dp),
                         contentAlignment = Alignment.Center
                     ) {

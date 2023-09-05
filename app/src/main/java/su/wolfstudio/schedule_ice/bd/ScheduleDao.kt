@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import su.wolfstudio.schedule_ice.model.Schedule
+import su.wolfstudio.schedule_ice.model.ScheduleType
 
 @Dao
 interface ScheduleDao {
@@ -18,6 +19,9 @@ interface ScheduleDao {
 
     @Query("SELECT * from schedule WHERE date>=:startDate AND date<=:endDate")
     fun getSchedulePeriodDate(startDate: Long, endDate: Long): List<Schedule>
+
+    @Query("SELECT * from schedule WHERE date>=:startDate AND date<=:endDate")
+    fun getSchedulePeriodDateStreamOld(startDate: Long, endDate: Long): Flow<List<Schedule>>
 
     @Query("SELECT * from schedule WHERE date>=:startDate AND date<=:endDate")
     fun getSchedulePeriodDateStream(startDate: Long, endDate: Long): Flow<List<Schedule>>
@@ -33,8 +37,5 @@ interface ScheduleDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun updateSchedule(schedule: Schedule)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun updateSchedules(schedules: List<Schedule>)
 
 }
