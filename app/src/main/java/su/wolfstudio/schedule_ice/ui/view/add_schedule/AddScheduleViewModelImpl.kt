@@ -1,8 +1,6 @@
 package su.wolfstudio.schedule_ice.ui.view.add_schedule
 
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import su.wolfstudio.schedule_ice.app.dependencies.getDependency
@@ -10,6 +8,7 @@ import su.wolfstudio.schedule_ice.bd.DataBase
 import su.wolfstudio.schedule_ice.cashe.ApplicationCache
 import su.wolfstudio.schedule_ice.cashe.StateValue
 import su.wolfstudio.schedule_ice.cashe.stateValue
+import su.wolfstudio.schedule_ice.model.Athlete
 import su.wolfstudio.schedule_ice.model.Palace
 import su.wolfstudio.schedule_ice.model.Schedule
 import su.wolfstudio.schedule_ice.ui.base.ViewModelBase
@@ -25,10 +24,27 @@ class AddScheduleViewModelImpl(
     override val schedules: StateValue<List<Schedule>> by stateValue(listOf())
     override val currentDate: StateValue<LocalDate> by stateValue(LocalDate.now())
 
+    private val athletes = mutableListOf<Athlete>()
+
     init {
+        observableAthletes()
         viewModelScope.launch(IO) {
             db.getSchedulesStream(palacesId)
-                .collect{ schedules.emit(it) }
+                .collect{
+                    it.map { schedule ->
+                        schedule.athletes = athletes.filter { schedule.athleteIds.contains(it.id) }
+                    }
+                    schedules.emit(it)
+                }
+        }
+    }
+
+    private fun observableAthletes(){
+        viewModelScope.launch(IO) {
+            db.getAthletes().collect{
+                athletes.clear()
+                athletes.addAll(it)
+            }
         }
     }
 
