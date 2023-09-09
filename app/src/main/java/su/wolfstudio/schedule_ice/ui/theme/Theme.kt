@@ -61,7 +61,8 @@ fun ScheduleIcePalacesTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = GreenBlueColor.toArgb()
+            window.navigationBarColor = GreenBlueColor.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
