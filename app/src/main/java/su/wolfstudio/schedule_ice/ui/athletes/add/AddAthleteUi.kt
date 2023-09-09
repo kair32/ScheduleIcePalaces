@@ -30,8 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import su.wolfstudio.schedule_ice.R
+import su.wolfstudio.schedule_ice.model.LoadStatus
 import su.wolfstudio.schedule_ice.ui.ScheduleOutlinedTextField
 import su.wolfstudio.schedule_ice.ui.base.AddAthleteViewModelFactory
+import su.wolfstudio.schedule_ice.ui.components.ProgressBar
 import su.wolfstudio.schedule_ice.ui.theme.SkateColor
 import su.wolfstudio.schedule_ice.ui.view.add_schedule.Date
 import java.time.LocalDate
@@ -46,6 +48,8 @@ fun AddAthleteUi(
 ) {
     val athlete by viewModel.athlete.collectAsState()
     val isError by viewModel.isError.collectAsState()
+    val status by viewModel.status.collectAsState()
+
     var showDatePicker by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -56,7 +60,7 @@ fun AddAthleteUi(
                 title = {
                     Text(
                         text = stringResource(
-                            id = if (athleteId == 0) R.string.edit_athlete
+                            id = if (athleteId != 0) R.string.edit_athlete
                             else R.string.add_athlete
                         ),
                         maxLines = 1,
@@ -85,47 +89,51 @@ fun AddAthleteUi(
                 }
             )
 
-            ScheduleOutlinedTextField(
-                text = athlete.surname,
-                labelText = R.string.surname,
-                isError = isError && athlete.surname.isEmpty(),
-                onValueChange = { viewModel.updateSurname(it) }
-            )
+            if (status == LoadStatus.LOAD) ProgressBar()
 
-            ScheduleOutlinedTextField(
-                text = athlete.name,
-                labelText = R.string.name,
-                isError = isError && athlete.name.isEmpty(),
-                onValueChange = { viewModel.updateName(it) }
-            )
-
-            ScheduleOutlinedTextField(
-                text = athlete.middleName ?: "",
-                labelText = R.string.middle_name,
-                isError = false,
-                onValueChange = { viewModel.updateMiddleName(it) }
-            )
-
-            ScheduleOutlinedTextField(
-                text = Date.getDateWithYear(athlete.birthday),
-                isError = isError && athlete.birthday == 0L,
-                labelText = R.string.date_birth,
-                onValueChange = {},
-                readOnly = true,
-            ) {
-                showDatePicker = true
-            }
-
-            if (showDatePicker)
-                DatePickerDialogAddAthlete(
-                    initialSelectedDateMillis = athlete.birthday,
-                    {
-                        viewModel.updateBirthday(it)
-                    }, {
-                        focusManager.clearFocus()
-                        showDatePicker = false
-                    }
+            if (status == LoadStatus.SUCCESSFUL) {
+                ScheduleOutlinedTextField(
+                    textDef = athlete.surname,
+                    labelText = R.string.surname,
+                    isError = isError && athlete.surname.isEmpty(),
+                    onValueChange = { viewModel.updateSurname(it) }
                 )
+
+                ScheduleOutlinedTextField(
+                    textDef = athlete.name,
+                    labelText = R.string.name,
+                    isError = isError && athlete.name.isEmpty(),
+                    onValueChange = { viewModel.updateName(it) }
+                )
+
+                ScheduleOutlinedTextField(
+                    textDef = athlete.middleName ?: "",
+                    labelText = R.string.middle_name,
+                    isError = false,
+                    onValueChange = { viewModel.updateMiddleName(it) }
+                )
+
+                ScheduleOutlinedTextField(
+                    text = Date.getDateWithYear(athlete.birthday),
+                    isError = isError && athlete.birthday == 0L,
+                    labelText = R.string.date_birth,
+                    onValueChange = {},
+                    readOnly = true,
+                ) {
+                    showDatePicker = true
+                }
+
+                if (showDatePicker)
+                    DatePickerDialogAddAthlete(
+                        initialSelectedDateMillis = athlete.birthday,
+                        {
+                            viewModel.updateBirthday(it)
+                        }, {
+                            focusManager.clearFocus()
+                            showDatePicker = false
+                        }
+                    )
+            }
         }
     )
 }

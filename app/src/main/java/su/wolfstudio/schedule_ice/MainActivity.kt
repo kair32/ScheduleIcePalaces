@@ -12,7 +12,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            ScheduleIcePalacesTheme {
+            ScheduleIcePalacesTheme(
+                darkTheme = false
+            ) {
                 BottomUi(navController = navController)
             }
         }

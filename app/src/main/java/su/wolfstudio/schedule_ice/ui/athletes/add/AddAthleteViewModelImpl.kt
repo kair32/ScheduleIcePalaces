@@ -8,6 +8,7 @@ import su.wolfstudio.schedule_ice.bd.DataBase
 import su.wolfstudio.schedule_ice.cashe.StateValue
 import su.wolfstudio.schedule_ice.cashe.stateValue
 import su.wolfstudio.schedule_ice.model.Athlete
+import su.wolfstudio.schedule_ice.model.LoadStatus
 import su.wolfstudio.schedule_ice.ui.base.ViewModelBase
 
 class AddAthleteViewModelImpl(
@@ -17,11 +18,13 @@ class AddAthleteViewModelImpl(
 
     override val isError: StateValue<Boolean> by stateValue(false)
     override val athlete: StateValue<Athlete> by stateValue(Athlete.getAthlete())
+    override val status: StateValue<LoadStatus> by stateValue(if (athleteId == 0) LoadStatus.SUCCESSFUL else LoadStatus.LOAD )
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             db.getAthleteById(athleteId)?.let {
                 athlete.emit(it)
+                status.emit(LoadStatus.SUCCESSFUL)
             }
         }
     }

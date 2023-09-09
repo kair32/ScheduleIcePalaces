@@ -22,26 +22,51 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import su.wolfstudio.schedule_ice.cashe.StateValue
-import su.wolfstudio.schedule_ice.cashe.stateValue
 import su.wolfstudio.schedule_ice.ui.theme.DimnessLightGray
 import su.wolfstudio.schedule_ice.ui.theme.GreenBlueColor
 
 @Composable
 fun ScheduleOutlinedTextField(
-    text: String,
+    textDef: String,
     labelText: Int,
     isError: Boolean,
     onValueChange: (String) -> Unit
-) = ScheduleOutlinedTextField(
-    text = text,
-    labelText = labelText,
-    onValueChange = onValueChange,
-    readOnly = false,
-    isError = isError
-) {}
+) {
+    var text by rememberSaveable { mutableStateOf(textDef) }
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = 16.dp,
+                vertical = 10.dp
+            ),
+        readOnly = false,
+        isError = isError,
+        shape = RoundedCornerShape(20),
+        label = { Text(text = stringResource(labelText)) },
+        value = text,
+        onValueChange = {
+            text = it
+            onValueChange(it)
+        },
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Sentences,
+            imeAction = ImeAction.Next
+        ),
+        textStyle = LocalTextStyle.current,
+        maxLines = 1,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            cursorColor = GreenBlueColor,
+            backgroundColor = DimnessLightGray,
+            focusedBorderColor = DimnessLightGray,
+            unfocusedBorderColor = DimnessLightGray,
+            focusedLabelColor = GreenBlueColor,
+            unfocusedLabelColor = Color.Gray,
+            errorLabelColor = Color.Red
+        )
+    )
+}
 
 @Composable
 fun ScheduleOutlinedTextField(
@@ -93,11 +118,4 @@ fun ScheduleOutlinedTextField(
                 }
             }
     )
-}
-
-class ScheduleOutlinedField {
-    val text: StateValue<String> by stateValue("")
-    fun updateText(it: String) {
-        text.compareAndSet(text.value, it)
-    }
 }
