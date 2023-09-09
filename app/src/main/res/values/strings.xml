@@ -15,7 +15,7 @@
     <string name="surname">Фамилия</string>
     <string name="name">Имя</string>
     <string name="middle_name">Отчество</string>
-    <string name="choose_date_birth">ВЫберите дату рождения</string>
+    <string name="choose_date_birth">Выберите дату рождения</string>
     <string name="date_birth">Дата рождения</string>
     <string name="select_participants">Выберите участников</string>
     <string name="participants">Участники</string>
