@@ -230,7 +230,10 @@ fun CheckingAuxiliary(
         )
         Checkbox(
             checked = switchCheckedAuxiliary,
-            onCheckedChange = { switchCheckedAuxiliary = !switchCheckedAuxiliary },
+            onCheckedChange = {
+                switchCheckedAuxiliary = !switchCheckedAuxiliary
+                onCheckAuxiliary(switchCheckedAuxiliary)
+                              },
             colors = CheckboxDefaults.colors(
                 checkedColor = GreenBlueColor
             )
