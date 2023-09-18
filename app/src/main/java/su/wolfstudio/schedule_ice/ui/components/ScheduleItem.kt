@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,7 +42,6 @@ import su.wolfstudio.schedule_ice.R
 import su.wolfstudio.schedule_ice.model.Athlete
 import su.wolfstudio.schedule_ice.model.Schedule
 import su.wolfstudio.schedule_ice.model.ScheduleType
-import su.wolfstudio.schedule_ice.ui.athletes.add.choose.ChooseAthleteItem
 import su.wolfstudio.schedule_ice.ui.athletes.add.choose.ChooseAthletesUi
 import su.wolfstudio.schedule_ice.ui.list.ImageIce
 import su.wolfstudio.schedule_ice.ui.theme.DimnessLightGray
@@ -230,7 +230,13 @@ fun CheckingAuxiliary(
         )
         Checkbox(
             checked = switchCheckedAuxiliary,
-            onCheckedChange = { switchCheckedAuxiliary = !switchCheckedAuxiliary }
+            onCheckedChange = {
+                switchCheckedAuxiliary = !switchCheckedAuxiliary
+                onCheckAuxiliary(switchCheckedAuxiliary)
+                              },
+            colors = CheckboxDefaults.colors(
+                checkedColor = GreenBlueColor
+            )
         )
     }
 }

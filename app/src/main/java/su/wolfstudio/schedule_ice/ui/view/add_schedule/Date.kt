@@ -80,7 +80,7 @@ object Date {
         calOld.time = Date(dateMils)
         val calNow = Calendar.getInstance()
 
-        return calNow.get(Calendar.DAY_OF_YEAR) - calOld.get(Calendar.DAY_OF_YEAR)
+        return calOld.get(Calendar.DAY_OF_YEAR) - calNow.get(Calendar.DAY_OF_YEAR)
     }
 
     /**
