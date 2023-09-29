@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -61,6 +60,7 @@ import su.wolfstudio.schedule_ice.ui.theme.SkateColor40
 import su.wolfstudio.schedule_ice.ui.view.add_schedule.Date
 import su.wolfstudio.schedule_ice.ui.view.add_schedule.Date.getCopyFormatSchedule
 import su.wolfstudio.schedule_ice.ui.view.add_schedule.Date.getDateWithDayOfWeek
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -69,6 +69,7 @@ fun ScheduleUi(
     navigation: NavController,
     viewModel: ScheduleViewModel = viewModel(ScheduleViewModelImpl::class.java)
 ) {
+    val isLoad by viewModel.isLoad.collectAsState()
     val palacesSchedules by viewModel.palacesSchedules.collectAsState()
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
@@ -100,6 +101,12 @@ fun ScheduleUi(
                 )
             }
             item { ChooseDatePeriod(viewModel) }
+
+            if (isLoad) return@LazyColumn
+
+            if (palacesSchedules.isEmpty())
+                item { EmptySchedule(modifier = modifier) }
+
             items(
                 items = palacesSchedules,
                 key = { it.date.toEpochDay() },
@@ -199,7 +206,7 @@ fun DateOfWeek(
     item: DateWithSchedulePalace,
     viewModel: ScheduleViewModel
 ) {
-    val isShowSchedule = remember { mutableStateOf(false) }
+    val isShowSchedule = remember { mutableStateOf(item.date == LocalDate.now()) }
     Column(modifier = modifier.fillMaxWidth()) {
         Divider(
             modifier = Modifier

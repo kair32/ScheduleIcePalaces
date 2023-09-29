@@ -7,6 +7,7 @@
     <string name="save">Сохранить</string>
     <string name="ok">Ок</string>
     <string name="schedule">Расписание</string>
+    <string name="empty_schedule">Расписание пустое :(</string>
     <string name="comment">Комментарий</string>
     <string name="add_comment">Добавить комментарий</string>
     <string name="training_details">Детали тренировки</string>

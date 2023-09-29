@@ -6,6 +6,7 @@ import su.wolfstudio.schedule_ice.model.Schedule
 import java.time.LocalDate
 
 interface ScheduleViewModel {
+    val isLoad: StateFlow<Boolean>
     val palacesSchedules: StateFlow<List<DateWithSchedulePalace>>
     val currentWeek: StateFlow<Pair<LocalDate, LocalDate>>
 

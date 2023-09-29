@@ -1,9 +1,7 @@
 package su.wolfstudio.schedule_ice.ui.schedule
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import su.wolfstudio.schedule_ice.app.dependencies.getDependency
 import su.wolfstudio.schedule_ice.bd.DataBase
@@ -24,6 +22,7 @@ class ScheduleViewModelImpl : ViewModelBase(), ScheduleViewModel {
 
     private val palace: List<Palace> = cash.listPalace.value
     override val palacesSchedules: StateValue<List<DateWithSchedulePalace>> by stateValue(listOf())
+    override val isLoad: StateValue<Boolean> by stateValue(true)
     override val currentWeek: StateValue<Pair<LocalDate, LocalDate>> by stateValue(Date.getDateByWeekend(isNext = false))
 
     private val athletes = mutableListOf<Athlete>()
@@ -45,14 +44,16 @@ class ScheduleViewModelImpl : ViewModelBase(), ScheduleViewModel {
                                 schedules.map { schedule ->
                                     schedule.athletes = athletes.filter { schedule.athleteIds.contains(it.id) }
                                 }
-                                palacesSchedulesNew.add(
-                                    DateWithSchedulePalace(
-                                        date = day,
-                                        palaces = palaces,
-                                        schedules = schedules
+                                if (schedules.isNotEmpty())
+                                    palacesSchedulesNew.add(
+                                        DateWithSchedulePalace(
+                                            date = day,
+                                            palaces = palaces,
+                                            schedules = schedules
+                                        )
                                     )
-                                )
                             }
+                            isLoad.emit(false)
                             palacesSchedules.emit(palacesSchedulesNew)
                         }
                 }
